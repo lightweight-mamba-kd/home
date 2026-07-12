@@ -1,63 +1,88 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { Cpu, HardDrive, Zap, Star } from "lucide-react";
+import { Cpu, HardDrive, Star } from "lucide-react";
 
 interface BenchmarkRow {
   model: string;
   parameters: string;
-  gflops: number;
-  memoryMB: number;
-  latencyOrin: number; // in ms
-  latencyPi5: number; // in ms
-  successRate: number; // in %
+  latencyA4000: number; // in ms
+  mAP: number; // in %
   isOurs?: boolean;
+  isStudent?: boolean;
 }
 
 const BENCHMARK_ROWS: BenchmarkRow[] = [
   {
-    model: "Transformer Teacher (RT-1 / Octo)",
-    parameters: "118.4M",
-    gflops: 24.5,
-    memoryMB: 480,
-    latencyOrin: 88.4,
-    latencyPi5: 345.0,
-    successRate: 98.2,
+    model: "CenterPoint [13]",
+    parameters: "5.98M",
+    latencyA4000: 26,
+    mAP: 59.2,
   },
   {
-    model: "Lightweight Mamba (Ours)",
-    parameters: "14.2M",
-    gflops: 2.1,
-    memoryMB: 58,
-    latencyOrin: 12.1,
-    latencyPi5: 38.6,
-    successRate: 96.5,
+    model: "VoxelNext [27]",
+    parameters: "19.05M",
+    latencyA4000: 46,
+    mAP: 60.5,
+  },
+  {
+    model: "Transfusion-L [28]",
+    parameters: "8.38M",
+    latencyA4000: 67,
+    mAP: 64.6,
+  },
+  {
+    model: "DSVT [14]",
+    parameters: "8.20M",
+    latencyA4000: 84,
+    mAP: 66.4,
+  },
+  {
+    model: "Voxel Mamba [6]",
+    parameters: "22.35M",
+    latencyA4000: 230,
+    mAP: 67.5,
+  },
+  {
+    model: "LION [5]",
+    parameters: "16.52M",
+    latencyA4000: 185,
+    mAP: 68.0,
+  },
+  {
+    model: "Teacher Model (Ours)",
+    parameters: "23.52M",
+    latencyA4000: 199,
+    mAP: 68.2,
     isOurs: true,
   },
   {
-    model: "DeiT-Imitation Baseline",
-    parameters: "14.5M",
-    gflops: 3.2,
-    memoryMB: 94,
-    latencyOrin: 28.5,
-    latencyPi5: 112.4,
-    successRate: 74.0,
+    model: "Student-d (Ours)",
+    parameters: "11.04M",
+    latencyA4000: 108,
+    mAP: 67.9,
+    isOurs: true,
+    isStudent: true,
   },
   {
-    model: "LSTM-Control Baseline",
-    parameters: "12.8M",
-    gflops: 1.5,
-    memoryMB: 45,
-    latencyOrin: 9.8,
-    latencyPi5: 32.0,
-    successRate: 48.5,
+    model: "Student-g (Ours)",
+    parameters: "10.50M",
+    latencyA4000: 97,
+    mAP: 67.1,
+    isOurs: true,
+    isStudent: true,
+  },
+  {
+    model: "Student-h (Ours)",
+    parameters: "4.11M",
+    latencyA4000: 71,
+    mAP: 65.6,
+    isOurs: true,
+    isStudent: true,
   },
 ];
 
 export default function Benchmark() {
-  const [hardwareFilter, setHardwareFilter] = useState<"orin" | "pi5">("orin");
-
   return (
     <section id="benchmark" className="py-24 px-4 md:px-8 bg-muted/20 relative overflow-hidden border-t border-border/40">
       <div className="w-full max-w-5xl mx-auto">
@@ -70,37 +95,13 @@ export default function Benchmark() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
-            Quantitative Benchmark
+            nuScenes Quantitative Benchmark
           </h2>
           <p className="text-muted-foreground mt-4 max-w-2xl mx-auto text-base">
-            Detailed performance comparison of compute overhead, memory foot-print, and control latency tested across representative edge platforms.
+            Detailed performance comparison on the nuScenes validation set. Latency measures the model execution on a single NVIDIA RTX A4000 GPU under identical settings.
           </p>
           <div className="h-1 w-12 bg-indigo-500 mx-auto mt-4 rounded-full" />
         </motion.div>
-
-        {/* Hardware Toggle */}
-        <div className="flex justify-end mb-6">
-          <div className="flex gap-1 p-1 bg-card/60 border border-border/60 rounded-xl glassmorphic">
-            <button
-              onClick={() => setHardwareFilter("orin")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                hardwareFilter === "orin" ? "bg-indigo-600 text-white shadow-xs" : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Cpu className="w-3.5 h-3.5" />
-              <span>Jetson Orin Nano</span>
-            </button>
-            <button
-              onClick={() => setHardwareFilter("pi5")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                hardwareFilter === "pi5" ? "bg-indigo-600 text-white shadow-xs" : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Cpu className="w-3.5 h-3.5" />
-              <span>Raspberry Pi 5</span>
-            </button>
-          </div>
-        </div>
 
         {/* Benchmark Table Card */}
         <motion.div
@@ -114,19 +115,15 @@ export default function Benchmark() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-border/60 bg-muted/30 text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                  <th className="py-4 px-6">Model Architecture</th>
-                  <th className="py-4 px-3 text-center">Params</th>
-                  <th className="py-4 px-3 text-center">GFLOPs</th>
-                  <th className="py-4 px-3 text-center">Memory (MB)</th>
+                  <th className="py-4 px-6">Model</th>
+                  <th className="py-4 px-3 text-center">Params (M)</th>
                   <th className="py-4 px-3 text-center">Latency (ms)</th>
-                  <th className="py-4 px-6 text-right">Task Success</th>
+                  <th className="py-4 px-6 text-right">nuScenes mAP (%)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40 text-sm">
                 {BENCHMARK_ROWS.map((row, index) => {
-                  const latency = hardwareFilter === "orin" ? row.latencyOrin : row.latencyPi5;
-                  const latencyMax = hardwareFilter === "orin" ? 100 : 400; // for normalization
-                  const latencyPercent = Math.min((latency / latencyMax) * 100, 100);
+                  const latencyPercent = Math.min((row.latencyA4000 / 250) * 100, 100);
 
                   return (
                     <tr
@@ -138,21 +135,19 @@ export default function Benchmark() {
                       <td className="py-4 px-6 flex items-center gap-2">
                         {row.isOurs && <Star className="w-4 h-4 text-amber-500 fill-amber-500 shrink-0" />}
                         <span>{row.model}</span>
-                        {row.isOurs && (
-                          <span className="text-[10px] bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/20 font-bold uppercase shrink-0">
-                            Ours
+                        {row.isStudent && (
+                          <span className="text-[9px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20 font-bold uppercase shrink-0">
+                            Student
                           </span>
                         )}
                       </td>
                       <td className="py-4 px-3 text-center font-mono text-xs">{row.parameters}</td>
-                      <td className="py-4 px-3 text-center font-mono text-xs">{row.gflops}</td>
-                      <td className="py-4 px-3 text-center font-mono text-xs">{row.memoryMB} MB</td>
                       <td className="py-4 px-3 text-center">
                         <div className="flex flex-col items-center gap-1">
-                          <span className="font-mono text-xs">{latency} ms</span>
+                          <span className="font-mono text-xs">{row.latencyA4000} ms</span>
                           <div className="w-16 h-1 bg-muted rounded-full overflow-hidden">
                             <div
-                              className={`h-full rounded-full ${row.isOurs ? "bg-emerald-500" : "bg-neutral-400"}`}
+                              className={`h-full rounded-full ${row.isOurs ? "bg-indigo-500" : "bg-neutral-400"}`}
                               style={{ width: `${100 - latencyPercent}%` }}
                             />
                           </div>
@@ -160,11 +155,11 @@ export default function Benchmark() {
                       </td>
                       <td className="py-4 px-6 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <span className="font-bold text-xs md:text-sm">{row.successRate}%</span>
+                          <span className="font-bold text-xs md:text-sm">{row.mAP}%</span>
                           <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden hidden sm:block">
                             <div
-                              className={`h-full rounded-full ${row.isOurs ? "bg-indigo-500" : "bg-neutral-400"}`}
-                              style={{ width: `${row.successRate}%` }}
+                              className={`h-full rounded-full ${row.isOurs ? "bg-emerald-500" : "bg-neutral-400"}`}
+                              style={{ width: `${row.mAP}%` }}
                             />
                           </div>
                         </div>
@@ -177,8 +172,8 @@ export default function Benchmark() {
           </div>
 
           <div className="border-t border-border/40 p-4 bg-muted/10 flex flex-wrap gap-6 text-xs text-muted-foreground justify-center">
-            <span className="flex items-center gap-1"><HardDrive className="w-3.5 h-3.5" /> Compiled with PyTorch 2.4 / TensorRT 10.0</span>
-            <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5" /> Measured average power draw at full load</span>
+            <span className="flex items-center gap-1"><HardDrive className="w-3.5 h-3.5" /> OpenPCDet Pretrained Baselines</span>
+            <span className="flex items-center gap-1"><Cpu className="w-3.5 h-3.5" /> Measured on a single NVIDIA RTX A4000 GPU</span>
           </div>
         </motion.div>
       </div>

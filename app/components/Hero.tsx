@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FileText, ArrowRight, Sparkles, Cpu, GitPullRequest } from "lucide-react";
+import { FileText, ArrowRight, Sparkles, GitPullRequest, Database, Box } from "lucide-react";
 import { paperConfig } from "../config/paper";
 
 const GithubIcon = ({ className }: { className?: string }) => (
@@ -44,7 +44,7 @@ export default function Hero() {
   } as const;
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-center items-center pt-24 pb-16 px-4 md:px-8 overflow-hidden bg-radial from-indigo-950/20 via-transparent to-transparent">
+    <section className="relative min-h-screen flex flex-col justify-center items-center pt-24 pb-16 px-4 md:px-8 overflow-hidden">
       {/* Background ambient glowing blobs */}
       <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] bg-purple-600/10 rounded-full blur-[120px] animate-pulse-slow -z-10" />
       <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-indigo-600/10 rounded-full blur-[140px] animate-pulse-slow -z-10" style={{ animationDelay: "2s" }} />
@@ -69,10 +69,9 @@ export default function Hero() {
           variants={itemVariants}
           className="text-4xl md:text-6xl font-extrabold tracking-tight max-w-4xl leading-tight mb-8"
         >
-          <span className="text-foreground">Lightweight </span>
-          <span className="text-gradient text-gradient-primary">Mamba</span>
-          <span className="text-foreground">: Efficient State Space Models for Real-time Robotic Control via </span>
-          <span className="text-gradient text-gradient-accent">Knowledge Distillation</span>
+          <span className="text-foreground">Lightweight 3D Object Detection via </span>
+          <span className="text-gradient text-gradient-primary">Mamba-Based</span>
+          <span className="text-foreground"> Knowledge Distillation</span>
         </motion.h1>
 
         {/* Authors List */}
@@ -102,7 +101,7 @@ export default function Hero() {
         {/* Affiliations */}
         <motion.div
           variants={itemVariants}
-          className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-xs md:text-sm text-muted-foreground mb-10 max-w-2xl"
+          className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-xs md:text-sm text-muted-foreground mb-10 max-w-3xl"
         >
           {affiliations.map((aff) => (
             <div key={aff.id} className="flex items-center gap-1">
@@ -161,7 +160,7 @@ export default function Hero() {
           )}
         </motion.div>
 
-        {/* Teaser Diagram / Visual */}
+        {/* Teaser Diagram */}
         <motion.div
           variants={itemVariants}
           className="w-full max-w-4xl p-6 md:p-8 rounded-3xl border border-border/80 bg-card/40 glassmorphic shadow-2xl relative overflow-hidden group"
@@ -170,63 +169,64 @@ export default function Hero() {
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(99,102,241,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(99,102,241,0.02)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
 
           <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 py-4">
-            {/* Teacher Model Side */}
+
+            {/* Input: Raw LiDAR */}
             <div className="flex-1 flex flex-col items-center">
               <div className="w-16 h-16 rounded-2xl bg-purple-600/10 border border-purple-500/20 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                <Cpu className="w-8 h-8 text-purple-500" />
+                <Database className="w-8 h-8 text-purple-500" />
               </div>
-              <h3 className="text-base font-bold text-foreground">Transformer Teacher</h3>
+              <h3 className="text-base font-bold text-foreground">Multi-branch Mamba Teacher</h3>
               <p className="text-xs text-muted-foreground text-center mt-1 max-w-[200px]">
-                High capacity, multi-head self-attention. Computationally heavy, O(N²) complexity.
+                High-capacity backbone with Shallow + Deep Mamba branches. Trained on full nuScenes.
               </p>
-              {/* Dummy block representation */}
               <div className="flex gap-1.5 mt-4">
                 {[1, 2, 3, 4].map((i) => (
                   <span key={i} className="w-8 h-2 rounded-full bg-purple-500/30 animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
                 ))}
               </div>
+              <span className="mt-2 text-[10px] font-mono text-purple-400">68.2 mAP · 23.5M params</span>
             </div>
 
             {/* Distillation Arrow */}
             <div className="flex flex-col items-center justify-center">
               <span className="text-xs font-semibold text-indigo-500 uppercase tracking-widest mb-2 flex items-center gap-1">
-                <GitPullRequest className="w-3.5 h-3.5" /> Distillation
+                <GitPullRequest className="w-3.5 h-3.5" /> Box-Aware KD
               </span>
-              <div className="w-12 h-12 md:w-24 md:h-12 flex items-center justify-center">
+              <div className="w-12 h-12 md:w-24 md:h-12 flex items-center justify-center relative">
                 <motion.div
                   animate={{ x: [-20, 20], opacity: [0, 1, 0] }}
                   transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                  className="w-4 h-4 rounded-full bg-indigo-500 blur-xs"
+                  className="w-4 h-4 rounded-full bg-indigo-500 blur-xs absolute"
                 />
-                <ArrowRight className="w-6 h-6 text-indigo-500 absolute rotate-90 md:rotate-0" />
+                <ArrowRight className="w-6 h-6 text-indigo-500 rotate-90 md:rotate-0" />
               </div>
               <span className="text-[10px] text-muted-foreground/80 mt-1 max-w-[120px] text-center">
-                Feature & Attention Map Alignment
+                Voxel-space latent state alignment
               </span>
             </div>
 
-            {/* Student Model Side */}
+            {/* Student model */}
             <div className="flex-1 flex flex-col items-center">
               <div className="w-16 h-16 rounded-2xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                <Cpu className="w-8 h-8 text-indigo-500" />
+                <Box className="w-8 h-8 text-indigo-500" />
               </div>
-              <h3 className="text-base font-bold text-foreground">Lightweight Mamba Student</h3>
+              <h3 className="text-base font-bold text-foreground">Compact Student (student-h)</h3>
               <p className="text-xs text-muted-foreground text-center mt-1 max-w-[200px]">
-                State-space model, selective recurrence. Hardware optimized, O(N) complexity.
+                Pruned architecture with 4.11M params. Runs at 71ms on A4000, 350ms on Jetson Orin NX.
               </p>
-              {/* Dummy block representation */}
               <div className="flex gap-1.5 mt-4">
                 {[1, 2, 3, 4].map((i) => (
                   <span key={i} className="w-8 h-2 rounded-full bg-indigo-500/30 animate-pulse" style={{ animationDelay: `${i * 0.3}s` }} />
                 ))}
               </div>
+              <span className="mt-2 text-[10px] font-mono text-indigo-400">65.6 mAP · 4.11M params</span>
             </div>
           </div>
 
           <div className="border-t border-border/40 mt-6 pt-4 flex flex-wrap justify-center gap-x-8 gap-y-2 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> 4.2x Speedup on Jetson Orin Nano</span>
-            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> 96.5% Success Rate Kept</span>
-            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> Real-time 50Hz Control Loop</span>
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> nuScenes: 68.2 mAP (Teacher) → 65.6 mAP (student-h)</span>
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> Livox-Legged: 69.21 mAP — best among all baselines</span>
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> Deployed on legged robot (Jetson Orin NX) at ~3 Hz</span>
           </div>
         </motion.div>
       </motion.div>

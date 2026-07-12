@@ -4,73 +4,71 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, TrendingUp, Zap, Clock } from "lucide-react";
 
-interface TaskResult {
+interface ClassResult {
   name: string;
-  teacherSuccess: number;
-  studentSuccess: number;
-  baselineSuccess: number;
-  teacherTime: string;
-  studentTime: string;
-  baselineTime: string;
-  teacherPower: string;
-  studentPower: string;
-  baselinePower: string;
-  pathTeacher: string; // SVG path data
-  pathStudent: string; // SVG path data
-  pathBaseline: string; // SVG path data
+  oursAP: number;
+  centerpointAP: number;
+  dsvtAP: number;
+  lionAP: number;
+  latencyJetson: string;
+  baselineLatency: string;
+  pointsSimulated: { x: number; y: number }[];
+  boxOurs: { x: number; y: number; w: number; h: number; r: number };
+  boxGt: { x: number; y: number; w: number; h: number; r: number };
 }
 
-const RESULTS_DATA: Record<string, TaskResult> = {
-  drawer: {
-    name: "Open Drawer",
-    teacherSuccess: 98,
-    studentSuccess: 96,
-    baselineSuccess: 74,
-    teacherTime: "4.2s",
-    studentTime: "4.5s",
-    baselineTime: "6.8s",
-    teacherPower: "45W (GPU)",
-    studentPower: "7.5W (Orin)",
-    baselinePower: "7.2W (Orin)",
-    pathTeacher: "M 30,170 Q 70,120 120,110 T 210,105",
-    pathStudent: "M 30,170 Q 68,124 118,114 T 210,107",
-    pathBaseline: "M 30,170 Q 55,140 90,140 T 170,150 T 200,160",
+const RESULTS_DATA: Record<string, ClassResult> = {
+  car: {
+    name: "Car (Vehicle)",
+    oursAP: 99.48,
+    centerpointAP: 92.55,
+    dsvtAP: 91.46,
+    lionAP: 94.24,
+    latencyJetson: "350ms",
+    baselineLatency: "928ms (LION)",
+    pointsSimulated: [
+      { x: 50, y: 80 }, { x: 55, y: 78 }, { x: 62, y: 82 }, { x: 70, y: 80 },
+      { x: 120, y: 110 }, { x: 124, y: 108 }, { x: 130, y: 112 }, { x: 135, y: 110 }, { x: 140, y: 108 },
+      { x: 180, y: 130 }, { x: 185, y: 128 }, { x: 190, y: 132 }, { x: 195, y: 130 },
+    ],
+    boxOurs: { x: 130, y: 110, w: 45, h: 22, r: -12 },
+    boxGt: { x: 129, y: 109, w: 45, h: 22, r: -12 },
   },
-  pick: {
-    name: "Pick & Place",
-    teacherSuccess: 95,
-    studentSuccess: 92,
-    baselineSuccess: 68,
-    teacherTime: "5.8s",
-    studentTime: "6.1s",
-    baselineTime: "8.5s",
-    teacherPower: "48W (GPU)",
-    studentPower: "7.8W (Orin)",
-    baselinePower: "7.5W (Orin)",
-    pathTeacher: "M 30,170 Q 80,60 140,80 T 210,140",
-    pathStudent: "M 30,170 Q 78,63 138,84 T 210,143",
-    pathBaseline: "M 30,170 Q 60,110 110,120 T 170,100 T 200,120",
+  pedestrian: {
+    name: "Pedestrian",
+    oursAP: 47.03,
+    centerpointAP: 36.60,
+    dsvtAP: 35.84,
+    lionAP: 33.48,
+    latencyJetson: "350ms",
+    baselineLatency: "425ms (DSVT)",
+    pointsSimulated: [
+      { x: 105, y: 95 }, { x: 108, y: 92 }, { x: 106, y: 100 }, { x: 107, y: 105 },
+      { x: 150, y: 120 }, { x: 151, y: 117 }, { x: 152, y: 124 }, { x: 149, y: 128 },
+    ],
+    boxOurs: { x: 150, y: 122, w: 14, h: 14, r: 5 },
+    boxGt: { x: 150, y: 121, w: 14, h: 14, r: 5 },
   },
-  obstacles: {
-    name: "Obstacle Avoidance",
-    teacherSuccess: 94,
-    studentSuccess: 91,
-    baselineSuccess: 55,
-    teacherTime: "8.1s",
-    studentTime: "8.6s",
-    baselineTime: "12.3s",
-    teacherPower: "52W (GPU)",
-    studentPower: "8.2W (Orin)",
-    baselinePower: "7.9W (Orin)",
-    pathTeacher: "M 30,170 C 60,140 80,100 120,120 S 180,150 210,110",
-    pathStudent: "M 30,170 C 58,142 78,103 118,122 S 178,148 210,112",
-    pathBaseline: "M 30,170 C 45,160 70,130 90,160 S 140,180 180,170",
+  motorcyclist: {
+    name: "Motorcyclist",
+    oursAP: 61.12,
+    centerpointAP: 32.14,
+    dsvtAP: 44.78,
+    lionAP: 35.02,
+    latencyJetson: "350ms",
+    baselineLatency: "142ms (CenterPoint)",
+    pointsSimulated: [
+      { x: 80, y: 100 }, { x: 84, y: 98 }, { x: 88, y: 102 },
+      { x: 160, y: 115 }, { x: 164, y: 113 }, { x: 168, y: 118 }, { x: 172, y: 116 },
+    ],
+    boxOurs: { x: 166, y: 115, w: 28, h: 16, r: -25 },
+    boxGt: { x: 165, y: 116, w: 28, h: 16, r: -25 },
   },
 };
 
 export default function Results() {
-  const [selectedTask, setSelectedTask] = useState<string>("drawer");
-  const currentResult = RESULTS_DATA[selectedTask];
+  const [selectedClass, setSelectedClass] = useState<string>("car");
+  const currentResult = RESULTS_DATA[selectedClass];
 
   return (
     <section id="results" className="py-24 px-4 md:px-8 bg-background relative overflow-hidden border-t border-border/40">
@@ -84,10 +82,10 @@ export default function Results() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
-            Qualitative &amp; Quantitative Results
+            Livox-Legged Validation Results
           </h2>
           <p className="text-muted-foreground mt-4 max-w-2xl mx-auto text-base">
-            Select a robotic manipulation task to observe trajectory tracking and efficiency metrics compared against the teacher and direct imitation learning baselines.
+            Per-class AP performance and 3D bounding box predictions on the real-world Livox-Legged test dataset. Latency measured onboard our Jetson Orin NX robot platform.
           </p>
           <div className="h-1 w-12 bg-indigo-500 mx-auto mt-4 rounded-full" />
         </motion.div>
@@ -97,14 +95,14 @@ export default function Results() {
           {Object.entries(RESULTS_DATA).map(([key, value]) => (
             <button
               key={key}
-              onClick={() => setSelectedTask(key)}
+              onClick={() => setSelectedClass(key)}
               className={`px-5 py-2.5 rounded-2xl border text-sm font-semibold transition-all flex items-center gap-2 ${
-                selectedTask === key
+                selectedClass === key
                   ? "bg-foreground text-background border-foreground shadow-md"
                   : "bg-card/40 border-border text-muted-foreground hover:text-foreground hover:bg-muted/50"
               }`}
             >
-              <Play className={`w-3.5 h-3.5 ${selectedTask === key ? "fill-background" : "fill-none"}`} />
+              <Play className={`w-3.5 h-3.5 ${selectedClass === key ? "fill-background" : "fill-none"}`} />
               <span>{value.name}</span>
             </button>
           ))}
@@ -116,73 +114,60 @@ export default function Results() {
           <div className="md:col-span-7 p-6 rounded-3xl border border-border bg-card/30 glassmorphic flex flex-col justify-between relative overflow-hidden min-h-[340px]">
             <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(99,102,241,0.01)_1px,transparent_1px),linear-gradient(to_bottom,rgba(99,102,241,0.01)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
             <div className="flex items-center justify-between border-b border-border/40 pb-3 mb-4">
-              <span className="text-xs font-bold text-foreground tracking-wide uppercase">Robot End-Effector Trajectory</span>
+              <span className="text-xs font-bold text-foreground tracking-wide uppercase">Voxel Points &amp; 3D Box Prediction</span>
               <div className="flex gap-4 text-[10px] font-semibold">
-                <span className="flex items-center gap-1 text-purple-500"><span className="w-2 h-0.5 bg-purple-500 inline-block" /> Teacher</span>
-                <span className="flex items-center gap-1 text-indigo-500"><span className="w-2 h-0.5 bg-indigo-500 inline-block" /> Student (Ours)</span>
-                <span className="flex items-center gap-1 text-zinc-400"><span className="w-2 h-0 border-t border-dashed border-zinc-400 inline-block" /> Baseline</span>
+                <span className="flex items-center gap-1 text-indigo-500"><span className="w-2 h-2 rounded-full bg-indigo-500 inline-block" /> Prediction (Ours)</span>
+                <span className="flex items-center gap-1 text-red-500"><span className="w-2 h-2 rounded-full bg-red-500 inline-block" /> Ground Truth</span>
+                <span className="flex items-center gap-1 text-neutral-400"><span className="w-1.5 h-1.5 rounded-full bg-neutral-400 inline-block" /> LiDAR Voxel</span>
               </div>
             </div>
 
             {/* SVG Path drawing */}
             <div className="flex-1 flex items-center justify-center min-h-[200px] relative">
               <svg viewBox="0 0 240 200" className="w-full h-auto max-h-[220px]">
-                {/* Obstacle / Target mocks */}
-                {selectedTask === "obstacles" && (
-                  <circle cx="120" cy="130" r="14" fill="rgba(244,63,94,0.15)" stroke="#f43f5e" strokeWidth="1" strokeDasharray="2 2" />
-                )}
-                {selectedTask === "obstacles" && (
-                  <text x="120" y="133" textAnchor="middle" fontSize="6" fill="#f43f5e" fontWeight="bold">Obstacle</text>
-                )}
+                {/* Simulated LiDAR Points */}
+                {currentResult.pointsSimulated.map((pt, i) => (
+                  <circle key={i} cx={pt.x} cy={pt.y} r="2.5" fill="currentColor" opacity="0.4" />
+                ))}
 
-                {/* Target */}
-                <circle cx="210" cy="110" r="6" fill="rgba(16,185,129,0.2)" stroke="#10b981" strokeWidth="1" />
-                <circle cx="210" cy="110" r="2" fill="#10b981" />
-                <text x="210" y="98" textAnchor="middle" fontSize="6" fill="#10b981" fontWeight="bold">Target</text>
+                {/* Ground Truth Bounding Box */}
+                <g transform={`rotate(${currentResult.boxGt.r} ${currentResult.boxGt.x} ${currentResult.boxGt.y})`}>
+                  <rect
+                    x={currentResult.boxGt.x - currentResult.boxGt.w / 2}
+                    y={currentResult.boxGt.y - currentResult.boxGt.h / 2}
+                    width={currentResult.boxGt.w}
+                    height={currentResult.boxGt.h}
+                    fill="rgba(239,68,68,0.05)"
+                    stroke="#ef4444"
+                    strokeWidth="1"
+                    strokeDasharray="2 2"
+                  />
+                </g>
 
-                {/* Starting point */}
-                <circle cx="30" cy="170" r="4" fill="currentColor" opacity="0.8" />
-                <text x="30" y="182" textAnchor="middle" fontSize="6" fill="currentColor" opacity="0.6">Start</text>
-
-                {/* Paths */}
+                {/* Predicted Bounding Box */}
                 <AnimatePresence mode="wait">
-                  <motion.path
-                    key={`baseline-${selectedTask}`}
-                    d={currentResult.pathBaseline}
-                    fill="none"
-                    stroke="#888"
-                    strokeWidth="1.5"
-                    strokeDasharray="3 3"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 1.5, ease: "easeOut" }}
-                  />
-                  <motion.path
-                    key={`teacher-${selectedTask}`}
-                    d={currentResult.pathTeacher}
-                    fill="none"
-                    stroke="#a855f7"
-                    strokeWidth="2"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 1.2, ease: "easeOut" }}
-                  />
-                  <motion.path
-                    key={`student-${selectedTask}`}
-                    d={currentResult.pathStudent}
-                    fill="none"
-                    stroke="#6366f1"
-                    strokeWidth="2.5"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 1.2, ease: "easeOut", delay: 0.1 }}
-                  />
+                  <g transform={`rotate(${currentResult.boxOurs.r} ${currentResult.boxOurs.x} ${currentResult.boxOurs.y})`}>
+                    <motion.rect
+                      key={`box-${selectedClass}`}
+                      x={currentResult.boxOurs.x - currentResult.boxOurs.w / 2}
+                      y={currentResult.boxOurs.y - currentResult.boxOurs.h / 2}
+                      width={currentResult.boxOurs.w}
+                      height={currentResult.boxOurs.h}
+                      fill="rgba(99,102,241,0.1)"
+                      stroke="#6366f1"
+                      strokeWidth="1.8"
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.8, opacity: 0 }}
+                      transition={{ duration: 0.5, ease: "easeOut" }}
+                    />
+                  </g>
                 </AnimatePresence>
               </svg>
             </div>
 
             <div className="text-[10px] text-muted-foreground/60 italic text-center mt-2">
-              Trajectories mapped from top-down workspace camera coordinates.
+              Bird's eye view (BEV) projections of LiDAR returns in calibrated vehicle coordinates.
             </div>
           </div>
 
@@ -191,19 +176,19 @@ export default function Results() {
             {/* Success rate card */}
             <div className="p-5 rounded-3xl border border-border bg-card/30 glassmorphic flex flex-col justify-between">
               <span className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-1.5 mb-4">
-                <TrendingUp className="w-4 h-4 text-emerald-500" /> Success Rate
+                <TrendingUp className="w-4 h-4 text-emerald-500" /> Average Precision (AP)
               </span>
               <div className="flex flex-col gap-3">
                 {/* Student */}
                 <div className="flex flex-col">
                   <div className="flex justify-between items-baseline text-xs mb-1">
-                    <span className="font-semibold text-foreground">Lightweight Mamba (Ours)</span>
-                    <span className="font-bold text-indigo-500 text-sm">{currentResult.studentSuccess}%</span>
+                    <span className="font-semibold text-foreground">Student-h (Ours)</span>
+                    <span className="font-bold text-indigo-500 text-sm">{currentResult.oursAP}%</span>
                   </div>
                   <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
-                      whileInView={{ width: `${currentResult.studentSuccess}%` }}
+                      whileInView={{ width: `${currentResult.oursAP}%` }}
                       viewport={{ once: true }}
                       transition={{ duration: 1, ease: "easeOut" }}
                       className="h-full bg-indigo-500 rounded-full"
@@ -211,16 +196,16 @@ export default function Results() {
                   </div>
                 </div>
 
-                {/* Teacher */}
+                {/* LION */}
                 <div className="flex flex-col">
                   <div className="flex justify-between items-baseline text-xs mb-1">
-                    <span className="font-medium text-muted-foreground">Transformer Teacher</span>
-                    <span className="font-bold text-purple-400">{currentResult.teacherSuccess}%</span>
+                    <span className="font-medium text-muted-foreground">LION Baseline</span>
+                    <span className="font-bold text-purple-400">{currentResult.lionAP}%</span>
                   </div>
                   <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
-                      whileInView={{ width: `${currentResult.teacherSuccess}%` }}
+                      whileInView={{ width: `${currentResult.lionAP}%` }}
                       viewport={{ once: true }}
                       transition={{ duration: 1, ease: "easeOut" }}
                       className="h-full bg-purple-500 rounded-full"
@@ -228,16 +213,33 @@ export default function Results() {
                   </div>
                 </div>
 
-                {/* Baseline */}
+                {/* DSVT */}
                 <div className="flex flex-col">
                   <div className="flex justify-between items-baseline text-xs mb-1">
-                    <span className="font-medium text-muted-foreground">Imitation Baseline (No KD)</span>
-                    <span className="font-bold text-muted-foreground">{currentResult.baselineSuccess}%</span>
+                    <span className="font-medium text-muted-foreground">DSVT Baseline</span>
+                    <span className="font-bold text-blue-400">{currentResult.dsvtAP}%</span>
                   </div>
                   <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
-                      whileInView={{ width: `${currentResult.baselineSuccess}%` }}
+                      whileInView={{ width: `${currentResult.dsvtAP}%` }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1, ease: "easeOut" }}
+                      className="h-full bg-blue-500 rounded-full"
+                    />
+                  </div>
+                </div>
+
+                {/* CenterPoint */}
+                <div className="flex flex-col">
+                  <div className="flex justify-between items-baseline text-xs mb-1">
+                    <span className="font-medium text-muted-foreground">CenterPoint Baseline</span>
+                    <span className="font-bold text-neutral-400">{currentResult.centerpointAP}%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      whileInView={{ width: `${currentResult.centerpointAP}%` }}
                       viewport={{ once: true }}
                       transition={{ duration: 1, ease: "easeOut" }}
                       className="h-full bg-zinc-400 dark:bg-zinc-700 rounded-full"
@@ -251,20 +253,18 @@ export default function Results() {
             <div className="p-5 rounded-3xl border border-border bg-card/30 glassmorphic grid grid-cols-2 gap-4">
               <div className="flex flex-col">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase flex items-center gap-1 mb-2">
-                  <Clock className="w-3.5 h-3.5 text-blue-500" /> Avg. Time
+                  <Clock className="w-3.5 h-3.5 text-indigo-500" /> Ours Latency
                 </span>
-                <span className="text-xl font-bold text-foreground">{currentResult.studentTime}</span>
-                <span className="text-[10px] text-muted-foreground mt-1">Teacher: {currentResult.teacherTime}</span>
-                <span className="text-[10px] text-muted-foreground">Baseline: {currentResult.baselineTime}</span>
+                <span className="text-xl font-bold text-foreground">{currentResult.latencyJetson}</span>
+                <span className="text-[9px] text-muted-foreground mt-1">Measured on Jetson Orin NX</span>
               </div>
 
               <div className="flex flex-col">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase flex items-center gap-1 mb-2">
-                  <Zap className="w-3.5 h-3.5 text-amber-500" /> Power Usage
+                  <Zap className="w-3.5 h-3.5 text-purple-500" /> Comparison
                 </span>
-                <span className="text-xl font-bold text-emerald-500">{currentResult.studentPower}</span>
-                <span className="text-[10px] text-muted-foreground mt-1">Teacher: {currentResult.teacherPower}</span>
-                <span className="text-[10px] text-muted-foreground">Baseline: {currentResult.baselinePower}</span>
+                <span className="text-sm font-bold text-amber-500">{currentResult.baselineLatency}</span>
+                <span className="text-[9px] text-muted-foreground mt-1">Ours is up to 2.6x faster</span>
               </div>
             </div>
           </div>

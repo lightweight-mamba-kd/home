@@ -29,56 +29,64 @@ export interface PaperConfig {
 }
 
 export const paperConfig: PaperConfig = {
-  title: "Lightweight Mamba: Efficient State Space Models for Real-time Robotic Control via Cross-Architecture Knowledge Distillation",
+  title: "Lightweight 3D Object Detection via Mamba-Based Knowledge Distillation",
   authors: [
     {
-      name: "Quoc-Cuong Nguyen",
+      name: "Quoc Cuong Ninh",
       affiliation: "1",
-      email: "qcuong@robotics.edu",
-      homepage: "https://github.com/qcuongning",
+      email: "cuongnq23@viettel.com.vn",
     },
     {
-      name: "Jane Doe",
-      affiliation: "1",
-      email: "janedoe@robotics.edu",
+      name: "Huy Xuan Pham",
+      affiliation: "3",
+      email: "huy.pham@ece.au.dk",
     },
     {
-      name: "John Smith",
+      name: "Anh Tung Nguyen",
       affiliation: "2",
-      email: "johnsmith@research.org",
+      email: "tungna@viettel.com.vn",
+    },
+    {
+      name: "Dinh Hoan Trinh",
+      affiliation: "1",
+      email: "hoantd5@viettel.com.vn",
     },
   ],
   affiliations: [
     {
       id: "1",
-      name: "Robotics and AI Lab, University of Science",
+      name: "Viettel AI, Viettel Group, Vietnam",
     },
     {
       id: "2",
-      name: "AI Research Institute",
+      name: "VIST, Viettel Group, Vietnam",
+    },
+    {
+      id: "3",
+      name: "Artificial Intelligence in Robotics Laboratory (AiR Lab), Aarhus University, Denmark & Upteko ApS, Denmark",
     },
   ],
-  venue: "IEEE Robotics and Automation Letters (RA-L), 2026",
+  venue: "IEEE Robotics and Automation Letters (RA-L), Vol. 11, No. 6, June 2026",
   links: {
     pdf: "#",
-    arxiv: "https://arxiv.org",
+    arxiv: "#",
     code: "https://github.com/qcuongning/lightweight-mamba-kd",
-    video: "https://youtube.com",
+    video: "#",
   },
-  abstract: "Recent state space models (SSMs), particularly Mamba, have emerged as a promising alternative to Transformers due to their linear complexity with respect to sequence length. However, deploying Mamba models on resource-constrained robotic edge devices remains challenging due to the computational overhead of high-dimensional state transitions. In this paper, we present Lightweight Mamba, a highly optimized architecture tailored for real-time robotic control. To bridge the performance gap between large-scale vision-language-action models and edge-deployable controllers, we propose a novel cross-architecture Knowledge Distillation (KD) framework. Our approach distills spatial-temporal representations from a heavy Transformer teacher into a lightweight Mamba student. We evaluate our method on both simulation benchmarks and a physical mobile manipulator. Lightweight Mamba achieves a 4.2x speedup on a Jetson Orin Nano, while maintaining 96.5% of the teacher's task success rate, demonstrating the viability of SSMs for high-frequency closed-loop robotic control.",
+  abstract:
+    "3D object detection using LiDAR sensors requires a balance between computational efficiency and accuracy for onboard perception in autonomous driving and robotic navigation. Many existing LiDAR-based detection methods employ complex architectures to extract features, integrating large amounts of contextual information to enhance accuracy. This often results in significant computational costs, leading to suboptimal performance on resource-constrained embedded devices. In this study, we propose a knowledge distillation framework that transfers object-level voxel representations from a strong teacher model to lightweight student models through selective voxel-space feature alignment. Taking advantage of the linear-time sequence model with selective state spaces (Mamba), we design a multi-branch Mamba teacher backbone and a box-aware feature transfer mechanism that aligns spatially corresponding voxel features between teacher and student networks through a Mamba-based projection module. Experimental results on both a public dataset and real-world data show that our approach significantly reduces computational load while maintaining competitive accuracy compared with state-of-the-art methods.",
   contributions: [
-    "We present Lightweight Mamba, the first hardware-efficient State Space Model optimized specifically for closed-loop robotic manipulation and navigation.",
-    "We propose a novel Cross-Architecture Knowledge Distillation (CA-KD) framework that transfers spatial-temporal attention maps from Transformer teachers to SSM dynamics.",
-    "We design hardware-aware optimization techniques for Mamba blocks, reducing activation memory by 45% and latency by 3.2x on edge platforms.",
-    "We demonstrate extensive real-world evaluation on a mobile manipulator, achieving a 96.5% task success rate under dynamic obstacle environments.",
+    "We propose a novel Multi-branch Mamba 3D Backbone as a high-capacity teacher model, integrating Shallow and Deep Mamba branches to enhance multi-scale feature representation from sparse LiDAR point clouds.",
+    "We introduce a Mamba Adaptive Distillation strategy with a box-aware feature transfer mechanism that selectively aligns voxel features within ground-truth 3D bounding boxes, enabling effective knowledge transfer to compact student models.",
+    "We reformulate the Cost-Performance Ratio (CPR) metric by incorporating inference latency, providing a more deployment-relevant measure of model efficiency on embedded robotic platforms.",
+    "We collect and validate on a real-world proprietary dataset (Livox-Legged) using legged robots equipped with Livox Mid-360 LiDAR sensors, demonstrating practical deployment on an NVIDIA Jetson Orin NX at ~3 Hz.",
   ],
-  bibtex: `@article{nguyen2026lightweight,
-  title={Lightweight Mamba: Efficient State Space Models for Real-time Robotic Control via Cross-Architecture Knowledge Distillation},
-  author={Nguyen, Quoc-Cuong and Doe, Jane and Smith, John},
+  bibtex: `@article{ninh2026lightweight,
+  title={Lightweight 3D Object Detection via Mamba-Based Knowledge Distillation},
+  author={Ninh, Quoc Cuong and Pham, Huy Xuan and Nguyen, Anh Tung and Trinh, Dinh Hoan},
   journal={IEEE Robotics and Automation Letters},
   volume={11},
-  number={3},
-  pages={1245--1252},
+  number={6},
   year={2026},
   publisher={IEEE}
 }`,

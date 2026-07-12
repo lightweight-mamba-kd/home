@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Bot, RefreshCw, Eye, Sparkles, Layers } from "lucide-react";
+import { Bot, RefreshCw, Eye, Cpu, Radio } from "lucide-react";
 
 interface Scenario {
   title: string;
@@ -10,52 +10,52 @@ interface Scenario {
   icon: any;
   metric: string;
   metricLabel: string;
-  camColor: string; // for theme accents
-  camGrid: boolean; // overlay coordinate grid
+  camColor: string;
+  camGrid: boolean;
 }
 
 const SCENARIOS: Scenario[] = [
   {
-    title: "Dynamic Obstacle Avoidance",
-    badge: "Reactive Control",
+    title: "Multi-Sensor LiDAR Calibration",
+    badge: "Hardware Sync",
     description:
-      "Tested on a physical 7-DoF manipulator arm. The student Mamba model replans joint trajectories in real-time at 50Hz, avoiding sudden human hand intervention.",
-    icon: Bot,
-    metric: "98.4%",
-    metricLabel: "Collision-Free Rate",
+      "Multiple Livox Mid-360 LiDAR sensors are mounted on the legged robot. Point clouds from all sensors are spatially calibrated and merged into a unified spatial representation.",
+    icon: Radio,
+    metric: "3",
+    metricLabel: "Merged Sensors",
     camColor: "text-indigo-500 bg-indigo-500/10",
     camGrid: true,
   },
   {
-    title: "Unseen Item Generalization",
-    badge: "Generalization",
+    title: "Pedestrian-Aware Patrol Navigation",
+    badge: "Robotic Safety",
     description:
-      "Evaluates grasping and placement success rates on novel household items (various packaging, mugs, tools) not seen during the training phase.",
-    icon: Sparkles,
-    metric: "+18.2%",
-    metricLabel: "vs Direct Imitation",
+      "The robot operates in outdoor navigation scenarios. The distilled model accurately detects pedestrians, cars, and motorcyclists to ensure obstacle-free routing.",
+    icon: Bot,
+    metric: "69.21%",
+    metricLabel: "Livox-Legged mAP",
     camColor: "text-purple-500 bg-purple-500/10",
     camGrid: false,
   },
   {
-    title: "Robustness to Lighting Shifts",
-    badge: "Robustness",
+    title: "Motion Planner Integration",
+    badge: "Closed-Loop Control",
     description:
-      "Deploys under drastic lighting modifications (direct sunlight, ambient shadows, specular reflections), proving representation stability from teacher alignment.",
+      "3D detection bounding boxes are fed directly to the robot's local trajectory planner, enabling it to execute a safe stop when an obstacle enters its forward path.",
     icon: Eye,
-    metric: "94.5%",
-    metricLabel: "Success under Shadows",
+    metric: "100%",
+    metricLabel: "Obstacle Stop Rate",
     camColor: "text-blue-500 bg-blue-500/10",
     camGrid: true,
   },
   {
-    title: "Multi-Task Sequence Chaining",
-    badge: "Sequential Tasks",
+    title: "Embedded Jetson Onboard Execution",
+    badge: "Edge Compute",
     description:
-      "Chains multiple sub-tasks (opening a drawer, picking a container, placing it inside, and pushing the drawer shut) in a single continuous control loop.",
-    icon: Layers,
-    metric: "91.2%",
-    metricLabel: "Sequence Completion",
+      "Our optimized student-h model runs directly on the NVIDIA Jetson Orin NX platform, achieving deployment latency suitable for low-speed autonomous patrolling.",
+    icon: Cpu,
+    metric: "~3 Hz",
+    metricLabel: "Inference Speed",
     camColor: "text-emerald-500 bg-emerald-500/10",
     camGrid: false,
   },
@@ -74,10 +74,10 @@ export default function Deployment() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
-            Real-world Physical Deployment
+            Legged Robot Patrol Deployment
           </h2>
           <p className="text-muted-foreground mt-4 max-w-2xl mx-auto text-base">
-            We evaluate the distilled Lightweight Mamba model directly on a physical mobile manipulator platform to validate real-time, closed-loop robustness.
+            We deploy and test the lightweight Student-h model on a physical legged patrol robot in a pedestrian-aware navigation scenario to evaluate real-world perception.
           </p>
           <div className="h-1 w-12 bg-indigo-500 mx-auto mt-4 rounded-full" />
         </motion.div>
@@ -102,7 +102,7 @@ export default function Deployment() {
                       {sc.badge}
                     </span>
                     <span className="text-xs text-muted-foreground font-mono flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" /> LIVE STREAM
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> SYSTEM OK
                     </span>
                   </div>
                   <h3 className="text-lg font-bold text-foreground mb-2 group-hover:text-indigo-500 transition-colors">
@@ -124,14 +124,14 @@ export default function Deployment() {
                   <div className="relative z-10 flex justify-between items-start">
                     <div className="flex gap-2">
                       <span className="text-[9px] font-bold text-neutral-400 bg-black/60 px-2 py-0.5 rounded border border-neutral-800">
-                        CAM_0{idx + 1}
+                        LIVOX_CAM_0{idx + 1}
                       </span>
                       <span className="text-[9px] font-bold text-neutral-400 bg-black/60 px-2 py-0.5 rounded border border-neutral-800">
-                        50 FPS
+                        Merged pointcloud
                       </span>
                     </div>
                     <span className="text-[8px] font-mono text-neutral-400 bg-black/60 px-1.5 py-0.5 rounded border border-neutral-800">
-                      SYS_OK
+                      ORIN_NX
                     </span>
                   </div>
 
@@ -153,8 +153,8 @@ export default function Deployment() {
                   {/* Bottom overlay: Metrics */}
                   <div className="relative z-10 flex justify-between items-end">
                     <div className="flex flex-col">
-                      <span className="text-[8px] font-bold uppercase text-neutral-400">Target Action</span>
-                      <span className="text-[10px] font-mono text-neutral-200">Joints dQ: [-0.12, 0.43, -0.02, ...]</span>
+                      <span className="text-[8px] font-bold uppercase text-neutral-400">Planning State</span>
+                      <span className="text-[10px] font-mono text-neutral-200">cmd_vel: [0.0, 0.0, 0.0] (STOP)</span>
                     </div>
                     <div className="flex flex-col items-end">
                       <span className="text-[8px] font-bold uppercase text-neutral-400">{sc.metricLabel}</span>
