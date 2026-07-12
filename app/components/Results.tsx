@@ -68,7 +68,9 @@ const RESULTS_DATA: Record<string, ClassResult> = {
 
 export default function Results() {
   const [selectedClass, setSelectedClass] = useState<string>("car");
+  const [activeSubTab, setActiveSubTab] = useState<"bbox" | "curve">("bbox");
   const currentResult = RESULTS_DATA[selectedClass];
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
   return (
     <section id="results" className="py-24 px-4 md:px-8 bg-background relative overflow-hidden border-t border-border/40">
@@ -113,61 +115,101 @@ export default function Results() {
           {/* Visual Trajectory Graph (SVG-based animation) */}
           <div className="md:col-span-7 p-6 rounded-3xl border border-border bg-card/30 glassmorphic flex flex-col justify-between relative overflow-hidden min-h-[340px]">
             <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(99,102,241,0.01)_1px,transparent_1px),linear-gradient(to_bottom,rgba(99,102,241,0.01)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
-            <div className="flex items-center justify-between border-b border-border/40 pb-3 mb-4">
-              <span className="text-xs font-bold text-foreground tracking-wide uppercase">Voxel Points &amp; 3D Box Prediction</span>
-              <div className="flex gap-4 text-[10px] font-semibold">
-                <span className="flex items-center gap-1 text-indigo-500"><span className="w-2 h-2 rounded-full bg-indigo-500 inline-block" /> Prediction (Ours)</span>
-                <span className="flex items-center gap-1 text-red-500"><span className="w-2 h-2 rounded-full bg-red-500 inline-block" /> Ground Truth</span>
-                <span className="flex items-center gap-1 text-neutral-400"><span className="w-1.5 h-1.5 rounded-full bg-neutral-400 inline-block" /> LiDAR Voxel</span>
+            
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/40 pb-3 mb-4">
+              <div className="flex gap-1 p-0.5 bg-muted/40 rounded-lg border border-border/40 self-start">
+                <button
+                  onClick={() => setActiveSubTab("bbox")}
+                  className={`px-3 py-1.5 rounded-md text-[10px] font-bold transition-all ${
+                    activeSubTab === "bbox"
+                      ? "bg-card text-foreground shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  3D Bounding Box
+                </button>
+                <button
+                  onClick={() => setActiveSubTab("curve")}
+                  className={`px-3 py-1.5 rounded-md text-[10px] font-bold transition-all ${
+                    activeSubTab === "curve"
+                      ? "bg-card text-foreground shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Validation Curves
+                </button>
               </div>
+              {activeSubTab === "bbox" ? (
+                <div className="flex gap-4 text-[10px] font-semibold self-end">
+                  <span className="flex items-center gap-1 text-indigo-500"><span className="w-2 h-2 rounded-full bg-indigo-500 inline-block" /> Prediction (Ours)</span>
+                  <span className="flex items-center gap-1 text-red-500"><span className="w-2 h-2 rounded-full bg-red-500 inline-block" /> Ground Truth</span>
+                </div>
+              ) : (
+                <div className="text-[10px] font-semibold text-muted-foreground self-end">
+                  mAP (%) vs Epochs
+                </div>
+              )}
             </div>
 
-            {/* SVG Path drawing */}
+            {/* Content body */}
             <div className="flex-1 flex items-center justify-center min-h-[200px] relative">
-              <svg viewBox="0 0 240 200" className="w-full h-auto max-h-[220px]">
-                {/* Simulated LiDAR Points */}
-                {currentResult.pointsSimulated.map((pt, i) => (
-                  <circle key={i} cx={pt.x} cy={pt.y} r="2.5" fill="currentColor" opacity="0.4" />
-                ))}
+              {activeSubTab === "bbox" ? (
+                <svg viewBox="0 0 240 200" className="w-full h-auto max-h-[220px]">
+                  {/* Simulated LiDAR Points */}
+                  {currentResult.pointsSimulated.map((pt, i) => (
+                    <circle key={i} cx={pt.x} cy={pt.y} r="2.5" fill="currentColor" opacity="0.4" />
+                  ))}
 
-                {/* Ground Truth Bounding Box */}
-                <g transform={`rotate(${currentResult.boxGt.r} ${currentResult.boxGt.x} ${currentResult.boxGt.y})`}>
-                  <rect
-                    x={currentResult.boxGt.x - currentResult.boxGt.w / 2}
-                    y={currentResult.boxGt.y - currentResult.boxGt.h / 2}
-                    width={currentResult.boxGt.w}
-                    height={currentResult.boxGt.h}
-                    fill="rgba(239,68,68,0.05)"
-                    stroke="#ef4444"
-                    strokeWidth="1"
-                    strokeDasharray="2 2"
-                  />
-                </g>
-
-                {/* Predicted Bounding Box */}
-                <AnimatePresence mode="wait">
-                  <g transform={`rotate(${currentResult.boxOurs.r} ${currentResult.boxOurs.x} ${currentResult.boxOurs.y})`}>
-                    <motion.rect
-                      key={`box-${selectedClass}`}
-                      x={currentResult.boxOurs.x - currentResult.boxOurs.w / 2}
-                      y={currentResult.boxOurs.y - currentResult.boxOurs.h / 2}
-                      width={currentResult.boxOurs.w}
-                      height={currentResult.boxOurs.h}
-                      fill="rgba(99,102,241,0.1)"
-                      stroke="#6366f1"
-                      strokeWidth="1.8"
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0.8, opacity: 0 }}
-                      transition={{ duration: 0.5, ease: "easeOut" }}
+                  {/* Ground Truth Bounding Box */}
+                  <g transform={`rotate(${currentResult.boxGt.r} ${currentResult.boxGt.x} ${currentResult.boxGt.y})`}>
+                    <rect
+                      x={currentResult.boxGt.x - currentResult.boxGt.w / 2}
+                      y={currentResult.boxGt.y - currentResult.boxGt.h / 2}
+                      width={currentResult.boxGt.w}
+                      height={currentResult.boxGt.h}
+                      fill="rgba(239,68,68,0.05)"
+                      stroke="#ef4444"
+                      strokeWidth="1"
+                      strokeDasharray="2 2"
                     />
                   </g>
-                </AnimatePresence>
-              </svg>
+
+                  {/* Predicted Bounding Box */}
+                  <AnimatePresence mode="wait">
+                    <g transform={`rotate(${currentResult.boxOurs.r} ${currentResult.boxOurs.x} ${currentResult.boxOurs.y})`}>
+                      <motion.rect
+                        key={`box-${selectedClass}`}
+                        x={currentResult.boxOurs.x - currentResult.boxOurs.w / 2}
+                        y={currentResult.boxOurs.y - currentResult.boxOurs.h / 2}
+                        width={currentResult.boxOurs.w}
+                        height={currentResult.boxOurs.h}
+                        fill="rgba(99,102,241,0.1)"
+                        stroke="#6366f1"
+                        strokeWidth="1.8"
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.8, opacity: 0 }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
+                      />
+                    </g>
+                  </AnimatePresence>
+                </svg>
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center p-2">
+                  <img
+                    src={`${basePath}/validation_curve.png`}
+                    alt="Validation Curve: Student-h vs DSVT on Livox-Legged"
+                    className="max-w-full max-h-[190px] object-contain rounded-lg border border-border/60 bg-white"
+                  />
+                </div>
+              )}
             </div>
 
             <div className="text-[10px] text-muted-foreground/60 italic text-center mt-2">
-              Bird's eye view (BEV) projections of LiDAR returns in calibrated vehicle coordinates.
+              {activeSubTab === "bbox" 
+                ? "Bird's eye view (BEV) projections of LiDAR returns in calibrated vehicle coordinates."
+                : "Validation mAP (%) convergence comparing student-h training curves against DSVT baseline."
+              }
             </div>
           </div>
 
