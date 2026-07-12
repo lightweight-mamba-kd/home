@@ -66,7 +66,7 @@ export const paperConfig: PaperConfig = {
       name: "Artificial Intelligence in Robotics Laboratory (AiR Lab), Aarhus University, Denmark & Upteko ApS, Denmark",
     },
   ],
-  venue: "IEEE Robotics and Automation Letters (RA-L), Vol. 11, No. 6, June 2026",
+  venue: "IEEE Robotics and Automation Letters (RA-L), 2026",
   links: {
     pdf: "#",
     arxiv: "#",

@@ -68,7 +68,6 @@ const RESULTS_DATA: Record<string, ClassResult> = {
 
 export default function Results() {
   const [selectedClass, setSelectedClass] = useState<string>("car");
-  const [activeSubTab, setActiveSubTab] = useState<"bbox" | "curve">("bbox");
   const currentResult = RESULTS_DATA[selectedClass];
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
@@ -92,7 +91,7 @@ export default function Results() {
           <div className="h-1 w-12 bg-indigo-500 mx-auto mt-4 rounded-full" />
         </motion.div>
 
-        {/* Task Selector Buttons */}
+        {/* Class Selector Buttons */}
         <div className="flex justify-center gap-3 mb-12 flex-wrap">
           {Object.entries(RESULTS_DATA).map(([key, value]) => (
             <button
@@ -110,204 +109,192 @@ export default function Results() {
           ))}
         </div>
 
-        {/* Results Showcase Grid */}
-        <div className="grid md:grid-cols-12 gap-8 items-stretch">
+        {/* Visualizations Row */}
+        <div className="grid md:grid-cols-2 gap-8 mb-8 items-stretch">
           {/* Visual Trajectory Graph (SVG-based animation) */}
-          <div className="md:col-span-7 p-6 rounded-3xl border border-border bg-card/30 glassmorphic flex flex-col justify-between relative overflow-hidden min-h-[340px]">
+          <div className="p-6 rounded-3xl border border-border bg-card/30 glassmorphic flex flex-col justify-between relative overflow-hidden min-h-[340px]">
             <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(99,102,241,0.01)_1px,transparent_1px),linear-gradient(to_bottom,rgba(99,102,241,0.01)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
             
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/40 pb-3 mb-4">
-              <div className="flex gap-1 p-0.5 bg-muted/40 rounded-lg border border-border/40 self-start">
-                <button
-                  onClick={() => setActiveSubTab("bbox")}
-                  className={`px-3 py-1.5 rounded-md text-[10px] font-bold transition-all ${
-                    activeSubTab === "bbox"
-                      ? "bg-card text-foreground shadow-xs"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  3D Bounding Box
-                </button>
-                <button
-                  onClick={() => setActiveSubTab("curve")}
-                  className={`px-3 py-1.5 rounded-md text-[10px] font-bold transition-all ${
-                    activeSubTab === "curve"
-                      ? "bg-card text-foreground shadow-xs"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Validation Curves
-                </button>
+            <div className="flex justify-between items-center border-b border-border/40 pb-3 mb-4">
+              <span className="text-xs font-bold text-foreground tracking-wide uppercase">3D Box Prediction ({currentResult.name})</span>
+              <div className="flex gap-4 text-[10px] font-semibold">
+                <span className="flex items-center gap-1 text-indigo-500"><span className="w-2 h-2 rounded-full bg-indigo-500 inline-block" /> Prediction</span>
+                <span className="flex items-center gap-1 text-red-500"><span className="w-2 h-2 rounded-full bg-red-500 inline-block" /> GT</span>
               </div>
-              {activeSubTab === "bbox" ? (
-                <div className="flex gap-4 text-[10px] font-semibold self-end">
-                  <span className="flex items-center gap-1 text-indigo-500"><span className="w-2 h-2 rounded-full bg-indigo-500 inline-block" /> Prediction (Ours)</span>
-                  <span className="flex items-center gap-1 text-red-500"><span className="w-2 h-2 rounded-full bg-red-500 inline-block" /> Ground Truth</span>
-                </div>
-              ) : (
-                <div className="text-[10px] font-semibold text-muted-foreground self-end">
-                  mAP (%) vs Epochs
-                </div>
-              )}
             </div>
 
-            {/* Content body */}
+            {/* SVG Path drawing */}
             <div className="flex-1 flex items-center justify-center min-h-[200px] relative">
-              {activeSubTab === "bbox" ? (
-                <svg viewBox="0 0 240 200" className="w-full h-auto max-h-[220px]">
-                  {/* Simulated LiDAR Points */}
-                  {currentResult.pointsSimulated.map((pt, i) => (
-                    <circle key={i} cx={pt.x} cy={pt.y} r="2.5" fill="currentColor" opacity="0.4" />
-                  ))}
+              <svg viewBox="0 0 240 200" className="w-full h-auto max-h-[220px]">
+                {/* Simulated LiDAR Points */}
+                {currentResult.pointsSimulated.map((pt, i) => (
+                  <circle key={i} cx={pt.x} cy={pt.y} r="2.5" fill="currentColor" opacity="0.4" />
+                ))}
 
-                  {/* Ground Truth Bounding Box */}
-                  <g transform={`rotate(${currentResult.boxGt.r} ${currentResult.boxGt.x} ${currentResult.boxGt.y})`}>
-                    <rect
-                      x={currentResult.boxGt.x - currentResult.boxGt.w / 2}
-                      y={currentResult.boxGt.y - currentResult.boxGt.h / 2}
-                      width={currentResult.boxGt.w}
-                      height={currentResult.boxGt.h}
-                      fill="rgba(239,68,68,0.05)"
-                      stroke="#ef4444"
-                      strokeWidth="1"
-                      strokeDasharray="2 2"
+                {/* Ground Truth Bounding Box */}
+                <g transform={`rotate(${currentResult.boxGt.r} ${currentResult.boxGt.x} ${currentResult.boxGt.y})`}>
+                  <rect
+                    x={currentResult.boxGt.x - currentResult.boxGt.w / 2}
+                    y={currentResult.boxGt.y - currentResult.boxGt.h / 2}
+                    width={currentResult.boxGt.w}
+                    height={currentResult.boxGt.h}
+                    fill="rgba(239,68,68,0.05)"
+                    stroke="#ef4444"
+                    strokeWidth="1"
+                    strokeDasharray="2 2"
+                  />
+                </g>
+
+                {/* Predicted Bounding Box */}
+                <AnimatePresence mode="wait">
+                  <g transform={`rotate(${currentResult.boxOurs.r} ${currentResult.boxOurs.x} ${currentResult.boxOurs.y})`}>
+                    <motion.rect
+                      key={`box-${selectedClass}`}
+                      x={currentResult.boxOurs.x - currentResult.boxOurs.w / 2}
+                      y={currentResult.boxOurs.y - currentResult.boxOurs.h / 2}
+                      width={currentResult.boxOurs.w}
+                      height={currentResult.boxOurs.h}
+                      fill="rgba(99,102,241,0.1)"
+                      stroke="#6366f1"
+                      strokeWidth="1.8"
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.8, opacity: 0 }}
+                      transition={{ duration: 0.5, ease: "easeOut" }}
                     />
                   </g>
-
-                  {/* Predicted Bounding Box */}
-                  <AnimatePresence mode="wait">
-                    <g transform={`rotate(${currentResult.boxOurs.r} ${currentResult.boxOurs.x} ${currentResult.boxOurs.y})`}>
-                      <motion.rect
-                        key={`box-${selectedClass}`}
-                        x={currentResult.boxOurs.x - currentResult.boxOurs.w / 2}
-                        y={currentResult.boxOurs.y - currentResult.boxOurs.h / 2}
-                        width={currentResult.boxOurs.w}
-                        height={currentResult.boxOurs.h}
-                        fill="rgba(99,102,241,0.1)"
-                        stroke="#6366f1"
-                        strokeWidth="1.8"
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.8, opacity: 0 }}
-                        transition={{ duration: 0.5, ease: "easeOut" }}
-                      />
-                    </g>
-                  </AnimatePresence>
-                </svg>
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center p-2">
-                  <img
-                    src={`${basePath}/validation_curve.png`}
-                    alt="Validation Curve: Student-h vs DSVT on Livox-Legged"
-                    className="max-w-full max-h-[190px] object-contain rounded-lg border border-border/60 bg-white"
-                  />
-                </div>
-              )}
+                </AnimatePresence>
+              </svg>
             </div>
 
             <div className="text-[10px] text-muted-foreground/60 italic text-center mt-2">
-              {activeSubTab === "bbox" 
-                ? "Bird's eye view (BEV) projections of LiDAR returns in calibrated vehicle coordinates."
-                : "Validation mAP (%) convergence comparing student-h training curves against DSVT baseline."
-              }
+              Bird's eye view (BEV) projections of LiDAR returns in calibrated vehicle coordinates.
             </div>
           </div>
 
-          {/* Metrics comparison cards */}
-          <div className="md:col-span-5 flex flex-col justify-between gap-4">
-            {/* Success rate card */}
-            <div className="p-5 rounded-3xl border border-border bg-card/30 glassmorphic flex flex-col justify-between">
-              <span className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-1.5 mb-4">
-                <TrendingUp className="w-4 h-4 text-emerald-500" /> Average Precision (AP)
-              </span>
-              <div className="flex flex-col gap-3">
-                {/* Student */}
-                <div className="flex flex-col">
-                  <div className="flex justify-between items-baseline text-xs mb-1">
-                    <span className="font-semibold text-foreground">Student-h (Ours)</span>
-                    <span className="font-bold text-indigo-500 text-sm">{currentResult.oursAP}%</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${currentResult.oursAP}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1, ease: "easeOut" }}
-                      className="h-full bg-indigo-500 rounded-full"
-                    />
-                  </div>
-                </div>
+          {/* Validation Curves Image */}
+          <div className="p-6 rounded-3xl border border-border bg-card/30 glassmorphic flex flex-col justify-between relative overflow-hidden min-h-[340px]">
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(99,102,241,0.01)_1px,transparent_1px),linear-gradient(to_bottom,rgba(99,102,241,0.01)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
+            
+            <div className="flex justify-between items-center border-b border-border/40 pb-3 mb-4">
+              <span className="text-xs font-bold text-foreground tracking-wide uppercase">Training Convergence Curves</span>
+              <span className="text-[10px] font-semibold text-muted-foreground">mAP (%) vs Epochs</span>
+            </div>
 
-                {/* LION */}
-                <div className="flex flex-col">
-                  <div className="flex justify-between items-baseline text-xs mb-1">
-                    <span className="font-medium text-muted-foreground">LION Baseline</span>
-                    <span className="font-bold text-purple-400">{currentResult.lionAP}%</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${currentResult.lionAP}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1, ease: "easeOut" }}
-                      className="h-full bg-purple-500 rounded-full"
-                    />
-                  </div>
-                </div>
+            <div className="flex-1 flex items-center justify-center min-h-[240px] relative overflow-hidden">
+              <img
+                src={`${basePath}/validation_curve.png`}
+                alt="Validation Curve: Student-h vs DSVT on Livox-Legged"
+                className="w-full h-auto max-h-[280px] object-contain rounded-2xl mix-blend-multiply dark:invert dark:mix-blend-screen"
+              />
+            </div>
 
-                {/* DSVT */}
-                <div className="flex flex-col">
-                  <div className="flex justify-between items-baseline text-xs mb-1">
-                    <span className="font-medium text-muted-foreground">DSVT Baseline</span>
-                    <span className="font-bold text-blue-400">{currentResult.dsvtAP}%</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${currentResult.dsvtAP}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1, ease: "easeOut" }}
-                      className="h-full bg-blue-500 rounded-full"
-                    />
-                  </div>
-                </div>
+            <div className="text-[10px] text-muted-foreground/60 italic text-center mt-2">
+              Validation mAP (%) convergence comparing student-h training curves against DSVT baseline.
+            </div>
+          </div>
+        </div>
 
-                {/* CenterPoint */}
-                <div className="flex flex-col">
-                  <div className="flex justify-between items-baseline text-xs mb-1">
-                    <span className="font-medium text-muted-foreground">CenterPoint Baseline</span>
-                    <span className="font-bold text-neutral-400">{currentResult.centerpointAP}%</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${currentResult.centerpointAP}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1, ease: "easeOut" }}
-                      className="h-full bg-zinc-400 dark:bg-zinc-700 rounded-full"
-                    />
-                  </div>
+        {/* Metrics Row */}
+        <div className="grid md:grid-cols-12 gap-8 items-stretch">
+          {/* Success rate card */}
+          <div className="md:col-span-7 p-6 rounded-3xl border border-border bg-card/30 glassmorphic flex flex-col justify-between">
+            <span className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-1.5 mb-4">
+              <TrendingUp className="w-4 h-4 text-emerald-500" /> Average Precision (AP)
+            </span>
+            <div className="flex flex-col gap-3">
+              {/* Student */}
+              <div className="flex flex-col">
+                <div className="flex justify-between items-baseline text-xs mb-1">
+                  <span className="font-semibold text-foreground">Student-h (Ours)</span>
+                  <span className="font-bold text-indigo-500 text-sm">{currentResult.oursAP}%</span>
+                </div>
+                <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    whileInView={{ width: `${currentResult.oursAP}%` }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                    className="h-full bg-indigo-500 rounded-full"
+                  />
+                </div>
+              </div>
+
+              {/* LION */}
+              <div className="flex flex-col">
+                <div className="flex justify-between items-baseline text-xs mb-1">
+                  <span className="font-medium text-muted-foreground">LION Baseline</span>
+                  <span className="font-bold text-purple-400">{currentResult.lionAP}%</span>
+                </div>
+                <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    whileInView={{ width: `${currentResult.lionAP}%` }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                    className="h-full bg-purple-500 rounded-full"
+                  />
+                </div>
+              </div>
+
+              {/* DSVT */}
+              <div className="flex flex-col">
+                <div className="flex justify-between items-baseline text-xs mb-1">
+                  <span className="font-medium text-muted-foreground">DSVT Baseline</span>
+                  <span className="font-bold text-blue-400">{currentResult.dsvtAP}%</span>
+                </div>
+                <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    whileInView={{ width: `${currentResult.dsvtAP}%` }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                    className="h-full bg-blue-500 rounded-full"
+                  />
+                </div>
+              </div>
+
+              {/* CenterPoint */}
+              <div className="flex flex-col">
+                <div className="flex justify-between items-baseline text-xs mb-1">
+                  <span className="font-medium text-muted-foreground">CenterPoint Baseline</span>
+                  <span className="font-bold text-neutral-400">{currentResult.centerpointAP}%</span>
+                </div>
+                <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    whileInView={{ width: `${currentResult.centerpointAP}%` }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                    className="h-full bg-zinc-400 dark:bg-zinc-700 rounded-full"
+                  />
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Time & power card */}
-            <div className="p-5 rounded-3xl border border-border bg-card/30 glassmorphic grid grid-cols-2 gap-4">
+          {/* Time & latency card */}
+          <div className="md:col-span-5 p-6 rounded-3xl border border-border bg-card/30 glassmorphic flex flex-col justify-between">
+            <div className="flex flex-col gap-6">
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase flex items-center gap-1 mb-2">
-                  <Clock className="w-3.5 h-3.5 text-indigo-500" /> Ours Latency
+                <span className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-1.5 mb-2">
+                  <Clock className="w-4 h-4 text-indigo-500" /> Ours Latency
                 </span>
-                <span className="text-xl font-bold text-foreground">{currentResult.latencyJetson}</span>
-                <span className="text-[9px] text-muted-foreground mt-1">Measured on Jetson Orin NX</span>
+                <span className="text-2xl font-bold text-foreground">{currentResult.latencyJetson}</span>
+                <span className="text-[10px] text-muted-foreground mt-1">Measured on Jetson Orin NX (Batch Size 1)</span>
               </div>
 
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase flex items-center gap-1 mb-2">
-                  <Zap className="w-3.5 h-3.5 text-purple-500" /> Comparison
+                <span className="text-xs font-bold text-muted-foreground uppercase flex items-center gap-1.5 mb-2">
+                  <Zap className="w-4 h-4 text-purple-500" /> Comparison
                 </span>
-                <span className="text-sm font-bold text-amber-500">{currentResult.baselineLatency}</span>
-                <span className="text-[9px] text-muted-foreground mt-1">Ours is up to 2.6x faster</span>
+                <span className="text-lg font-bold text-amber-500">{currentResult.baselineLatency}</span>
+                <span className="text-[10px] text-muted-foreground mt-1">Ours achieves up to 2.6x latency reduction</span>
               </div>
+            </div>
+            
+            <div className="text-[9px] text-muted-foreground/60 italic mt-4 border-t border-border/40 pt-3">
+              Latency values are obtained under identical environments for fair comparison.
             </div>
           </div>
         </div>
