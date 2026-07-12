@@ -39,6 +39,8 @@ const METHOD_STEPS = [
 ];
 
 export default function Method() {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
   return (
     <section id="method" className="py-24 px-4 md:px-8 bg-background relative overflow-hidden">
       <div className="w-full max-w-5xl mx-auto">
@@ -59,7 +61,7 @@ export default function Method() {
         </motion.div>
 
         {/* Core Method Description */}
-        <div className="grid md:grid-cols-2 gap-8 items-center mb-16">
+        <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -71,7 +73,7 @@ export default function Method() {
               Selective Voxel-Space Distillation
             </h3>
             <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
-              Directly transferring voxel representations between teacher and student networks is challenging due to the differences in feature dimensions and spatial sparse layouts.
+              Directly transferring voxel representations between teacher and student networks is challenging due to differences in feature dimensions and sparse spatial layouts.
             </p>
             <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
               To address this, our framework extracts intermediate Mamba block features and isolates common voxel indices that lie inside the ground-truth 3D bounding boxes. By focusing on active object voxels, we mitigate point cloud sparsity issues and suppress irrelevant background noise during knowledge transfer.
@@ -83,26 +85,13 @@ export default function Method() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6 }}
-            className="p-6 rounded-3xl border border-border bg-card/40 relative overflow-hidden"
+            className="p-4 rounded-3xl border border-border bg-white shadow-xl flex items-center justify-center overflow-hidden"
           >
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.1),rgba(255,255,255,0))]" />
-            <div className="relative z-10 flex flex-col gap-4 font-mono text-xs text-muted-foreground">
-              <div className="flex items-center justify-between border-b border-border/60 pb-2">
-                <span className="font-semibold text-foreground">Loss Formulations</span>
-                <span className="text-indigo-500">Active</span>
-              </div>
-              <div className="flex flex-col gap-2">
-                <div className="p-2 rounded bg-muted/50 border border-border/40">
-                  <span className="text-indigo-500 font-bold">L_latent</span> = 1 / |I_common| * Σ || F_T[i, :] - ϕ(F_S[i, :]) ||_2^2
-                </div>
-                <div className="p-2 rounded bg-muted/50 border border-border/40">
-                  <span className="text-purple-500 font-bold">L_head</span> = L_cls + L_reg + L_hm
-                </div>
-              </div>
-              <div className="text-[10px] text-muted-foreground/60 italic text-center mt-2">
-                Total Objective: L = L_task + α * L_latent + β * L_head  (α = 1.0, β = 0.5)
-              </div>
-            </div>
+            <img
+              src={`${basePath}/fig3.png`}
+              alt="Box-aware latent feature distillation in 3D voxel space"
+              className="max-w-full h-auto object-contain rounded-2xl"
+            />
           </motion.div>
         </div>
 

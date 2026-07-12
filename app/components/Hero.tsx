@@ -19,6 +19,7 @@ const YoutubeIcon = ({ className }: { className?: string }) => (
 
 export default function Hero() {
   const { title, authors, affiliations, venue, links } = paperConfig;
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -160,74 +161,22 @@ export default function Hero() {
           )}
         </motion.div>
 
-        {/* Teaser Diagram */}
+        {/* Teaser Video */}
         <motion.div
           variants={itemVariants}
-          className="w-full max-w-4xl p-6 md:p-8 rounded-3xl border border-border/80 bg-card/40 glassmorphic shadow-2xl relative overflow-hidden group"
+          className="w-full max-w-4xl rounded-3xl border border-border/80 bg-black/40 glassmorphic shadow-2xl overflow-hidden relative"
         >
-          {/* Animated background grid */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(99,102,241,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(99,102,241,0.02)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
-
-          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 py-4">
-
-            {/* Input: Raw LiDAR */}
-            <div className="flex-1 flex flex-col items-center">
-              <div className="w-16 h-16 rounded-2xl bg-purple-600/10 border border-purple-500/20 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                <Database className="w-8 h-8 text-purple-500" />
-              </div>
-              <h3 className="text-base font-bold text-foreground">Multi-branch Mamba Teacher</h3>
-              <p className="text-xs text-muted-foreground text-center mt-1 max-w-[200px]">
-                High-capacity backbone with Shallow + Deep Mamba branches. Trained on full nuScenes.
-              </p>
-              <div className="flex gap-1.5 mt-4">
-                {[1, 2, 3, 4].map((i) => (
-                  <span key={i} className="w-8 h-2 rounded-full bg-purple-500/30 animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
-                ))}
-              </div>
-              <span className="mt-2 text-[10px] font-mono text-purple-400">68.2 mAP · 23.5M params</span>
-            </div>
-
-            {/* Distillation Arrow */}
-            <div className="flex flex-col items-center justify-center">
-              <span className="text-xs font-semibold text-indigo-500 uppercase tracking-widest mb-2 flex items-center gap-1">
-                <GitPullRequest className="w-3.5 h-3.5" /> Box-Aware KD
-              </span>
-              <div className="w-12 h-12 md:w-24 md:h-12 flex items-center justify-center relative">
-                <motion.div
-                  animate={{ x: [-20, 20], opacity: [0, 1, 0] }}
-                  transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                  className="w-4 h-4 rounded-full bg-indigo-500 blur-xs absolute"
-                />
-                <ArrowRight className="w-6 h-6 text-indigo-500 rotate-90 md:rotate-0" />
-              </div>
-              <span className="text-[10px] text-muted-foreground/80 mt-1 max-w-[120px] text-center">
-                Voxel-space latent state alignment
-              </span>
-            </div>
-
-            {/* Student model */}
-            <div className="flex-1 flex flex-col items-center">
-              <div className="w-16 h-16 rounded-2xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                <Box className="w-8 h-8 text-indigo-500" />
-              </div>
-              <h3 className="text-base font-bold text-foreground">Compact Student (student-h)</h3>
-              <p className="text-xs text-muted-foreground text-center mt-1 max-w-[200px]">
-                Pruned architecture with 4.11M params. Runs at 71ms on A4000, 350ms on Jetson Orin NX.
-              </p>
-              <div className="flex gap-1.5 mt-4">
-                {[1, 2, 3, 4].map((i) => (
-                  <span key={i} className="w-8 h-2 rounded-full bg-indigo-500/30 animate-pulse" style={{ animationDelay: `${i * 0.3}s` }} />
-                ))}
-              </div>
-              <span className="mt-2 text-[10px] font-mono text-indigo-400">65.6 mAP · 4.11M params</span>
-            </div>
-          </div>
-
-          <div className="border-t border-border/40 mt-6 pt-4 flex flex-wrap justify-center gap-x-8 gap-y-2 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> nuScenes: 68.2 mAP (Teacher) → 65.6 mAP (student-h)</span>
-            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> Livox-Legged: 69.21 mAP — best among all baselines</span>
-            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> Deployed on legged robot (Jetson Orin NX) at ~3 Hz</span>
-          </div>
+          <video
+            className="w-full h-auto object-cover max-h-[480px]"
+            controls
+            autoPlay
+            muted
+            loop
+            playsInline
+          >
+            <source src={`${basePath}/paper3d.mp4`} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
         </motion.div>
       </motion.div>
     </section>
