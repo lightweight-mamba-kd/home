@@ -70,7 +70,7 @@ export const paperConfig: PaperConfig = {
   links: {
     pdf: "#",
     arxiv: "#",
-    code: "https://github.com/qcuongning/lightweight-mamba-kd",
+    code: "https://github.com/lightweight-mamba-kd/home",
     video: "#",
   },
   abstract:

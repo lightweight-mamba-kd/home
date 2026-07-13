@@ -36,7 +36,7 @@ jobs:
 
       - name: Build with Next.js
         env:
-          NEXT_PUBLIC_BASE_PATH: /lightweight-mamba-kd
+          NEXT_PUBLIC_BASE_PATH: ""
         run: npm run build
 
       - name: Upload artifact
