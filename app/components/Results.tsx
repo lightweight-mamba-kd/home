@@ -22,7 +22,7 @@ const RESULTS_DATA: Record<string, ClassResult> = {
     name: "Car (Vehicle)",
     oursAP: 99.48,
     centerpointAP: 92.55,
-    dsvtAP: 91.46,
+    dsvtAP: 91.64,
     lionAP: 94.24,
     latencyJetson: "350ms",
     baselineLatency: "928ms (LION)",

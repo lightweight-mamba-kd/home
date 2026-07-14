@@ -32,45 +32,46 @@ export const paperConfig: PaperConfig = {
   title: "Lightweight 3D Object Detection via Mamba-Based Knowledge Distillation",
   authors: [
     {
-      name: "Quoc Cuong Ninh",
+      name: "Author1",
       affiliation: "1",
-      email: "cuongnq23@viettel.com.vn",
+      email: "Author1@ins",
     },
     {
-      name: "Huy Xuan Pham",
-      affiliation: "3",
-      email: "huy.pham@ece.au.dk",
-    },
-    {
-      name: "Anh Tung Nguyen",
+      name: "Author2",
       affiliation: "2",
-      email: "tungna@viettel.com.vn",
+      email: "Author2@ins",
     },
     {
-      name: "Dinh Hoan Trinh",
-      affiliation: "1",
-      email: "hoantd5@viettel.com.vn",
+      name: "Author3",
+      affiliation: "2",
+      email: "Author3@ins",
+    },
+    {
+      name: "Author4",
+      affiliation: "2",
+      email: "Author4@ins",
     },
   ],
   affiliations: [
     {
       id: "1",
-      name: "Viettel AI, Viettel Group, Vietnam",
+      name: "Group X",
     },
     {
       id: "2",
-      name: "VIST, Viettel Group, Vietnam",
+      name: "Y University",
     },
     {
       id: "3",
-      name: "Artificial Intelligence in Robotics Laboratory (AiR Lab), Aarhus University, Denmark & Upteko ApS, Denmark",
+      name: "Z Lab",
     },
   ],
   venue: "IEEE Robotics and Automation Letters (RA-L), 2026",
   links: {
     pdf: "#",
     arxiv: "#",
-    code: "https://github.com/lightweight-mamba-kd/home",
+    // code: "https://github.com/lightweight-mamba-kd/home",
+    code: "#",
     video: "#",
   },
   abstract:
@@ -83,7 +84,7 @@ export const paperConfig: PaperConfig = {
   ],
   bibtex: `@article{ninh2026lightweight,
   title={Lightweight 3D Object Detection via Mamba-Based Knowledge Distillation},
-  author={Ninh, Quoc Cuong and Pham, Huy Xuan and Nguyen, Anh Tung and Trinh, Dinh Hoan},
+  author={Author 1, Author 2, Author 3, and Author 4},
   journal={IEEE Robotics and Automation Letters},
   volume={11},
   number={6},
