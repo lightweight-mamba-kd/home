@@ -32,46 +32,45 @@ export const paperConfig: PaperConfig = {
   title: "Lightweight 3D Object Detection via Mamba-Based Knowledge Distillation",
   authors: [
     {
-      name: "Author1",
+      name: "Quoc Cuong Ninh",
       affiliation: "1",
-      email: "Author1@ins",
+      email: "cuongnq23@viettel.com.vn",
     },
     {
-      name: "Author2",
-      affiliation: "2",
-      email: "Author2@ins",
+      name: "Huy Xuan Pham",
+      affiliation: "3",
+      email: "huy.pham@ece.au.dk",
     },
     {
-      name: "Author3",
+      name: "Anh Tung Nguyen",
       affiliation: "2",
-      email: "Author3@ins",
+      email: "tungna@viettel.com.vn",
     },
     {
-      name: "Author4",
-      affiliation: "2",
-      email: "Author4@ins",
+      name: "Dinh Hoan Trinh",
+      affiliation: "1",
+      email: "hoantd5@viettel.com.vn",
     },
   ],
   affiliations: [
     {
       id: "1",
-      name: "Group X",
+      name: "Viettel AI, Viettel Group, Vietnam",
     },
     {
       id: "2",
-      name: "Y University",
+      name: "VIST, Viettel Group, Vietnam",
     },
     {
       id: "3",
-      name: "Z Lab",
+      name: "Artificial Intelligence in Robotics Laboratory (AiR Lab), Aarhus University, Denmark & Upteko ApS, Denmark",
     },
   ],
   venue: "IEEE Robotics and Automation Letters (RA-L), 2026",
   links: {
     pdf: "#",
     arxiv: "#",
-    // code: "https://github.com/lightweight-mamba-kd/home",
-    code: "#",
+    code: "https://github.com/lightweight-mamba-kd/home",
     video: "#",
   },
   abstract:
@@ -82,13 +81,12 @@ export const paperConfig: PaperConfig = {
     "We reformulate the Cost-Performance Ratio (CPR) metric by incorporating inference latency, providing a more deployment-relevant measure of model efficiency on embedded robotic platforms.",
     "We collect and validate on a real-world proprietary dataset (Livox-Legged) using legged robots equipped with Livox Mid-360 LiDAR sensors, demonstrating practical deployment on an NVIDIA Jetson Orin NX at ~3 Hz.",
   ],
-  bibtex: `@article{ninh2026lightweight,
-  title={Lightweight 3D Object Detection via Mamba-Based Knowledge Distillation},
-  author={Author 1, Author 2, Author 3, and Author 4},
-  journal={IEEE Robotics and Automation Letters},
-  volume={11},
-  number={6},
+  bibtex: `@ARTICLE{11631859,
+  author={Ninh, Quoc Cuong and Pham, Huy Xuan and Nguyen, Anh Tung and Trinh, Dinh Hoan},
+  journal={IEEE Robotics and Automation Letters}, 
+  title={Lightweight 3D Object Detection via Mamba-Based Knowledge Distillation}, 
   year={2026},
-  publisher={IEEE}
-}`,
+  pages={1-8},
+  doi={10.1109/LRA.2026.3719203}}
+`,
 };
