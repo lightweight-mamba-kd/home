@@ -68,8 +68,8 @@ export const paperConfig: PaperConfig = {
   ],
   venue: "IEEE Robotics and Automation Letters (RA-L), 2026",
   links: {
-    pdf: "#",
-    arxiv: "#",
+    pdf: "https://ieeexplore.ieee.org/abstract/document/11631859",
+    arxiv: "https://arxiv.org/abs/2608.03490",
     code: "https://github.com/lightweight-mamba-kd/home",
     video: "#",
   },
